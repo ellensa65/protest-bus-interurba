@@ -9,7 +9,10 @@ import {
   Send,
   Users,
   ThumbsDown,
-  Info
+  Info,
+  ClipboardList,
+  Camera,
+  FileText
 } from 'lucide-react';
 
 // --- Simplified Components ---
@@ -211,18 +214,109 @@ export default function SarfaProtestPage() {
         </div>
       </section>
 
+      {/* Guia de Queixa Efectiva Section */}
+      <section>
+        <SectionTitle>
+          <ClipboardList className="text-accent" /> GUIA DE QUEIXA EFECTIVA
+        </SectionTitle>
+        <div className="flex flex-col gap-6">
+          {/* Step 1 */}
+          <div className="flex gap-4">
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-black text-lg shrink-0 shadow-lg shadow-accent/20">
+                1
+              </div>
+              <div className="w-0.5 h-full bg-neutral-200 dark:bg-neutral-800 my-1"></div>
+            </div>
+            <div className="pb-4">
+              <div className="flex items-center gap-2 mb-1">
+                <Clock size={16} className="text-accent" />
+                <h4 className="font-bold text-lg leading-none">Documenta la incidència</h4>
+              </div>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                Anota l'hora exacta del retard i la parada on et trobes. Les dades precises són la teva millor arma contra el "no ens consta".
+              </p>
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="flex gap-4">
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-black text-lg shrink-0 shadow-lg shadow-accent/20">
+                2
+              </div>
+              <div className="w-0.5 h-full bg-neutral-200 dark:bg-neutral-800 my-1"></div>
+            </div>
+            <div className="pb-4">
+              <div className="flex items-center gap-2 mb-1">
+                <Camera size={16} className="text-accent" />
+                <h4 className="font-bold text-lg leading-none">Identifica el vehicle</h4>
+              </div>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                Quan arribi el bus, fes una foto o apunta el **número de calca** (el número pintat a sobre de la porta o al darrere) o la matrícula.
+              </p>
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className="flex gap-4">
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-black text-lg shrink-0 shadow-lg shadow-accent/20">
+                3
+              </div>
+            </div>
+            <div className="pb-2">
+              <div className="flex items-center gap-2 mb-1">
+                <FileText size={16} className="text-accent" />
+                <h4 className="font-bold text-lg leading-none">Exigeix els teus drets</h4>
+              </div>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                Omple el formulari oficial. Cada queixa formal és un gra de sorra per forçar el canvi de concessió el 2028.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Callout Box */}
+        <div className="mt-8 p-5 bg-red-50 dark:bg-red-950/20 border-2 border-red-600/20 rounded-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+            <AlertTriangle size={60} />
+          </div>
+          <div className="flex gap-4 items-start relative z-10">
+            <div className="bg-red-600 p-2 rounded-lg text-white shrink-0 shadow-lg">
+              <Info size={24} />
+            </div>
+            <div>
+              <h5 className="font-black text-red-600 text-xs uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                Dada Crítica per a la Validesa Legal
+              </h5>
+              <p className="text-sm font-bold text-neutral-800 dark:text-neutral-200 leading-snug">
+                Sense el **número de calca** o la **matrícula**, la Generalitat pot arxivar la queixa automàticament. No deixis que la teva veu es perdi!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer Section */}
       <section className="mt-8 mb-12 text-center border-t border-neutral-200 dark:border-neutral-800 pt-12">
         <h3 className="text-lg font-black mb-6 italic tracking-tight">NO ET QUEDIS CALLAT!</h3>
 
         <div className="grid grid-cols-1 gap-3">
-          <a
-            href="#"
-            className="flex items-center justify-center gap-2 py-4 px-6 bg-foreground text-background rounded-2xl font-bold transition-all hover:opacity-90 active:scale-95"
-          >
-            <ExternalLink size={18} />
-            FORMULARI QUEIXA GENCAT
-          </a>
+          <div className="flex flex-col gap-2">
+            <a
+              href="https://queixes.gencat.cat/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 py-4 px-6 bg-foreground text-background rounded-2xl font-bold transition-all hover:opacity-90 active:scale-95"
+            >
+              <ExternalLink size={18} />
+              FORMULARI DE QUEIXA OFICIAL GENCAT
+            </a>
+            <p className="text-[10px] text-neutral-500 font-medium italic">
+              Important: Perquè la queixa tingui validesa legal, cal omplir aquest formulari oficial
+            </p>
+          </div>
 
           <div className="flex gap-3">
             <a

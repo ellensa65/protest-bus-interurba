@@ -317,25 +317,7 @@ export default function SarfaProtestPage() {
               Important: Perquè la queixa tingui validesa legal, cal omplir aquest formulari oficial
             </p>
           </div>
-
-          <div className="flex gap-3">
-            <a
-              href="#"
-              className="flex-1 flex items-center justify-center gap-2 py-4 px-4 border-2 border-foreground rounded-2xl font-bold transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800"
-            >
-              <Send size={18} />
-              TELEGRAM
-            </a>
-            <a
-              href="#"
-              className="flex-1 flex items-center justify-center gap-2 py-4 px-4 bg-green-500 text-white rounded-2xl font-bold transition-all hover:bg-green-600 shadow-lg shadow-green-500/20"
-            >
-              <Users size={18} />
-              WHATSAPP
-            </a>
-          </div>
         </div>
-
         <p className="mt-12 text-[10px] uppercase font-bold opacity-30 tracking-[0.2em]">
           Plataforma d'usuaris afectats per la Sarfa • La Bisbal d'Empordà
         </p>

@@ -14,6 +14,7 @@ import {
   Camera,
   FileText
 } from 'lucide-react';
+import ReportModal from './components/ReportModal';
 
 // --- Simplified Components ---
 
@@ -26,6 +27,20 @@ const SectionTitle = ({ children, className = "" }) => (
 const Card = ({ children, className = "" }) => (
   <div className={`p-6 rounded-2xl border border-neutral-200 bg-card shadow-sm ${className}`}>
     {children}
+  </div>
+);
+
+const TimeUnit = ({ value, label, isLast = false }) => (
+  <div className="flex items-center gap-2">
+    <div className="flex flex-col items-center">
+      <span className="text-4xl font-black text-red-600 tabular-nums leading-tight drop-shadow-[0_0_10px_rgba(220,38,38,0.3)]">
+        {value.toString().padStart(value >= 100 ? 3 : 2, '0')}
+      </span>
+      <span className="text-[9px] font-bold text-white/50 tracking-widest mt-1">
+        {label}
+      </span>
+    </div>
+    {!isLast && <span className="text-2xl font-black text-white/10 mb-5">:</span>}
   </div>
 );
 
@@ -64,20 +79,6 @@ const Countdown = () => {
     );
   }
 
-  const TimeUnit = ({ value, label, isLast = false }) => (
-    <div className="flex items-center gap-2">
-      <div className="flex flex-col items-center">
-        <span className="text-4xl font-black text-red-600 tabular-nums leading-tight drop-shadow-[0_0_10px_rgba(220,38,38,0.3)]">
-          {value.toString().padStart(value >= 100 ? 3 : 2, '0')}
-        </span>
-        <span className="text-[9px] font-bold text-white/50 tracking-widest mt-1">
-          {label}
-        </span>
-      </div>
-      {!isLast && <span className="text-2xl font-black text-white/10 mb-5">:</span>}
-    </div>
-  );
-
   return (
     <div className="flex flex-col gap-4">
       <p className="text-center text-[11px] font-bold text-neutral-500 px-4 leading-normal">
@@ -102,6 +103,8 @@ const Countdown = () => {
 // --- Content Sections ---
 
 export default function SarfaProtestPage() {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   const comments = [
     {
       user: "Joan S.",
@@ -144,8 +147,8 @@ export default function SarfaProtestPage() {
         </p>
 
         <button
-          className="w-full py-6 px-8 bg-accent hover:opacity-90 active:scale-95 transition-all rounded-2xl text-white font-black text-xl uppercase tracking-tighter animate-protest-pulse flex flex-col items-center gap-1 shadow-2xl shadow-accent/20"
-          onClick={() => alert('Gràcies per reportar-ho. Aquesta és una demo.')}
+          className="w-full py-6 px-8 bg-accent hover:opacity-90 active:scale-95 transition-all rounded-2xl text-white font-black text-xl uppercase tracking-tighter animate-protest-pulse flex flex-col items-center gap-1 shadow-2xl shadow-accent/20 cursor-pointer"
+          onClick={() => setIsModalOpen(true)}
         >
           <span>ESTIC A LA PARADA</span>
           <span className="text-sm opacity-80 font-bold">I EL BUS NO VE</span>
@@ -180,7 +183,7 @@ export default function SarfaProtestPage() {
 
           <div className="mt-4 flex items-start gap-2 text-xs text-neutral-500 dark:text-neutral-400 italic">
             <Info size={12} className="shrink-0 mt-0.5" />
-            <span>Dades basades en les queixes ciutadanes d'aquesta setmana.</span>
+            <span>Dades basades en les queixes ciutadanes d&apos;aquesta setmana.</span>
           </div>
         </Card>
       </section>
@@ -202,7 +205,7 @@ export default function SarfaProtestPage() {
               </div>
               <div className="flex-1">
                 <div className="bg-card p-4 rounded-2xl rounded-tl-none border border-neutral-200 dark:border-neutral-800 shadow-sm">
-                  <p className="text-sm font-medium leading-relaxed mb-2">"{comment.text}"</p>
+                  <p className="text-sm font-medium leading-relaxed mb-2">&ldquo;{comment.text}&rdquo;</p>
                   <div className="flex justify-between items-center opacity-60 text-[10px] font-bold">
                     <span>{comment.user.toUpperCase()}</span>
                     <span>{comment.time.toUpperCase()}</span>
@@ -234,7 +237,7 @@ export default function SarfaProtestPage() {
                 <h4 className="font-bold text-lg leading-none">Documenta la incidència</h4>
               </div>
               <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Anota l'hora exacta del retard i la parada on et trobes. Les dades precises són la teva millor arma contra el "no ens consta".
+                Anota l&apos;hora exacta del retard i la parada on et trobes. Les dades precises són la teva millor arma contra el &ldquo;no ens consta&rdquo;.
               </p>
             </div>
           </div>
@@ -319,7 +322,7 @@ export default function SarfaProtestPage() {
           </div>
         </div>
         <p className="mt-12 text-[10px] uppercase font-bold opacity-30 tracking-[0.2em]">
-          Plataforma d'usuaris afectats per la Sarfa • La Bisbal d'Empordà
+          Plataforma d&apos;usuaris afectats per la Sarfa • La Bisbal d&apos;Empordà
         </p>
       </section>
 
@@ -328,6 +331,9 @@ export default function SarfaProtestPage() {
         <h1 className="text-[200px] font-black leading-none rotate-90 translate-x-1/2">SARFA</h1>
       </div>
 
+      <ReportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
     </main>
   );
 }
+

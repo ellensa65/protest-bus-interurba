@@ -134,16 +134,13 @@ export default function SarfaProtestPage() {
 
       {/* Header / Hero Section */}
       <section className="text-center pt-8 pb-4">
-        <div className="inline-flex items-center gap-2 bg-red-300 text-red-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-6 animate-pulse">
-          <AlertTriangle size={14} /> ALERTA SERVEI DEFICIENT
-        </div>
 
-        <h1 className="text-6xl sm:text-7xl font-black leading-none mb-4 tracking-tighter italic">
+        <h1 className="text-6xl sm:text-7xl font-black leading-none mb-4 tracking-tighter">
           ENCARA <span className="text-red-600 tracking-normal overflow-visible">ESPERES?</span>
         </h1>
 
         <p className="text-xl font-medium text-neutral-600 dark:text-neutral-400 mb-10 leading-snug">
-          La realitat diària de la Sarfa a La Bisbal
+          La realitat diària del bus a les Comarques Gironines
         </p>
 
         <button

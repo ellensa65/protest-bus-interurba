@@ -46,7 +46,7 @@ export default function Countdown() {
   if (!mounted) {
     return (
       <div className="bg-neutral-900 rounded-3xl p-6 mx-2 h-24 animate-pulse flex items-center justify-center">
-        <span className="text-white/20 font-black tracking-widest">CARREGANT RELOTGE...</span>
+        <span className="text-white/20 font-black tracking-widest">CARREGANT COMPTE ENRERE...</span>
       </div>
     );
   }
@@ -54,15 +54,10 @@ export default function Countdown() {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-center text-[11px] font-bold text-neutral-500 px-4 leading-normal">
-        Compte enrere per a la fi de la concessió actual (2028).<br />
-        <span className="uppercase text-[9px] opacity-60">Cada retard compta per al nou concurs.</span>
+        Compte enrere per a la fi de la concessió actual (2028)<br />
+        <span className="uppercase text-[9px] opacity-60">Tot i això la Generalitat de Catalunya ho ha prorrogat fins el 2034</span>
       </p>
       <div className="bg-neutral-900 rounded-3xl p-6 pt-7 pb-5 mx-2 flex justify-center items-center gap-2 shadow-2xl border-t border-white/5 relative overflow-hidden">
-        {/* Background Decal */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
-          <span className="text-8xl font-black italic scale-150">SARFA</span>
-        </div>
-
         <TimeUnit value={timeLeft.days} label="DIES" />
         <TimeUnit value={timeLeft.hours} label="HORES" />
         <TimeUnit value={timeLeft.minutes} label="MINS" />

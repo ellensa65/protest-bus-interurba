@@ -36,6 +36,37 @@ function formatDelay(minutes) {
   return `${hours}h ${remainingMinutes.toString().padStart(2, '0')}min`;
 }
 
+function formatRelativeTime(dateString) {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+
+  if (diffMins < 1) {
+    return "FA UNS SEGONS";
+  }
+  if (diffMins === 1) {
+    return "FA 1 MINUT";
+  }
+  if (diffMins < 60) {
+    return `FA ${diffMins} MINUTS`;
+  }
+
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours === 1) {
+    return "FA 1 HORA";
+  }
+  if (diffHours < 24) {
+    return `FA ${diffHours} HORES`;
+  }
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays === 1) {
+    return "FA 1 DIA";
+  }
+  return `FA ${diffDays} DIES`;
+}
+
 // --- Content Sections ---
 
 export default async function SarfaProtestPage() {
@@ -45,7 +76,7 @@ export default async function SarfaProtestPage() {
 
   const { data: records, error } = await supabase
     .from('Incidencies')
-    .select('retard, operadora')
+    .select('retard, operadora_id')
     .gte('created_at', sevenDaysAgo.toISOString());
 
   if (error) {
@@ -58,7 +89,7 @@ export default async function SarfaProtestPage() {
 
   if (records) {
     records.forEach(row => {
-      const op = row.operadora || 'Desconegut';
+      const op = row.operadora_id || 'Desconegut';
       const delay = row.retard || 0;
       totalDelayMinutes += delay;
       operatorDelays[op] = (operatorDelays[op] || 0) + delay;
@@ -95,29 +126,24 @@ export default async function SarfaProtestPage() {
     .filter(item => item.minutes > 0)
     .sort((a, b) => b.minutes - a.minutes);
 
-  const comments = [
-    {
-      user: "Joan S.",
-      time: "fa 5 minuts",
-      text: "El de les 8:15 ni ha passat. Una altra vegada tard a la feina.",
-      initials: "JS",
-      color: "bg-neutral-500"
-    },
-    {
-      user: "Marta G.",
-      time: "fa 20 minuts",
-      text: "Bus ple a vessar, gent dreta fins a Girona. Vergonya de servei.",
-      initials: "MG",
-      color: "bg-neutral-600"
-    },
-    {
-      user: "Usuari anònim",
-      time: "fa 35 minuts",
-      text: "Portem 30 minuts esperant a la parada del centre sota el sol.",
-      initials: "UA",
-      color: "bg-neutral-400"
-    }
-  ];
+  // Obtenir els comentaris reals d'incidències per a EL MUR
+  const { data: dbComments, error: commentsError } = await supabase
+    .from('Incidencies')
+    .select('id, created_at, comentari, operadora_id, Operadores(nom)')
+    .not('comentari', 'is', null)
+    .neq('comentari', '')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (commentsError) {
+    console.error("Error obtenint comentaris de Supabase:", commentsError);
+  }
+
+  const comments = (dbComments || []).map(row => ({
+    text: row.comentari,
+    time: formatRelativeTime(row.created_at),
+    operator: row.Operadores?.nom || 'Operadora no identificada'
+  }));
 
   return (
     <main className="min-h-screen max-w-md mx-auto px-4 py-8 flex flex-col gap-12 bg-background text-foreground">
@@ -215,14 +241,15 @@ export default async function SarfaProtestPage() {
         <div className="flex flex-col gap-4">
           {comments.map((comment, i) => (
             <div key={i} className="flex gap-4 items-start">
-              <div className={`w-10 h-10 rounded-full ${comment.color} flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-inner`}>
-                {comment.initials}
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shadow-inner`}>
+                UA
               </div>
               <div className="flex-1">
                 <div className="bg-card p-4 rounded-2xl rounded-tl-none border border-neutral-200 dark:border-neutral-800 shadow-sm">
                   <p className="text-sm font-medium leading-relaxed mb-2">&ldquo;{comment.text}&rdquo;</p>
                   <div className="flex justify-between items-center opacity-60 text-[10px] font-bold">
-                    <span>{comment.user.toUpperCase()}</span>
+                    <span>USUARI ANÒNIM</span>
+                    <span>{comment.operator.toUpperCase()}</span>
                     <span>{comment.time.toUpperCase()}</span>
                   </div>
                 </div>
@@ -232,113 +259,16 @@ export default async function SarfaProtestPage() {
         </div>
       </section>
 
-      {/* Guia de Queixa Efectiva Section */}
-      <section>
-        <SectionTitle>
-          <ClipboardList className="text-accent" /> GUIA DE QUEIXA EFECTIVA
-        </SectionTitle>
-        <div className="flex flex-col gap-6">
-          {/* Step 1 */}
-          <div className="flex gap-4">
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-black text-lg shrink-0 shadow-lg shadow-accent/20">
-                1
-              </div>
-              <div className="w-0.5 h-full bg-neutral-200 dark:bg-neutral-800 my-1"></div>
-            </div>
-            <div className="pb-4">
-              <div className="flex items-center gap-2 mb-1">
-                <Clock size={16} className="text-accent" />
-                <h4 className="font-bold text-lg leading-none">Documenta la incidència</h4>
-              </div>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Anota l&apos;hora exacta del retard i la parada on et trobes. Les dades precises són la teva millor arma contra el &ldquo;no ens consta&rdquo;.
-              </p>
-            </div>
-          </div>
-
-          {/* Step 2 */}
-          <div className="flex gap-4">
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-black text-lg shrink-0 shadow-lg shadow-accent/20">
-                2
-              </div>
-              <div className="w-0.5 h-full bg-neutral-200 dark:bg-neutral-800 my-1"></div>
-            </div>
-            <div className="pb-4">
-              <div className="flex items-center gap-2 mb-1">
-                <Camera size={16} className="text-accent" />
-                <h4 className="font-bold text-lg leading-none">Identifica el vehicle</h4>
-              </div>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Quan arribi el bus, fes una foto o apunta el **número de calca** (el número pintat a sobre de la porta o al darrere) o la matrícula.
-              </p>
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="flex gap-4">
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-black text-lg shrink-0 shadow-lg shadow-accent/20">
-                3
-              </div>
-            </div>
-            <div className="pb-2">
-              <div className="flex items-center gap-2 mb-1">
-                <FileText size={16} className="text-accent" />
-                <h4 className="font-bold text-lg leading-none">Exigeix els teus drets</h4>
-              </div>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                Omple el formulari oficial. Cada queixa formal és un gra de sorra per forçar el canvi de concessió el 2028.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Callout Box */}
-        <div className="mt-8 p-5 bg-red-50 dark:bg-red-950/20 border-2 border-red-600/20 rounded-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
-            <AlertTriangle size={60} />
-          </div>
-          <div className="flex gap-4 items-start relative z-10">
-            <div className="bg-red-600 p-2 rounded-lg text-white shrink-0 shadow-lg">
-              <Info size={24} />
-            </div>
-            <div>
-              <h5 className="font-black text-red-600 text-xs uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                Dada Crítica per a la Validesa Legal
-              </h5>
-              <p className="text-sm font-bold text-neutral-800 dark:text-neutral-200 leading-snug">
-                Sense el **número de calca** o la **matrícula**, la Generalitat pot arxivar la queixa automàticament. No deixis que la teva veu es perdi!
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Footer Section */}
       <section className="mt-8 mb-12 text-center border-t border-neutral-200 dark:border-neutral-800 pt-12">
         <h3 className="text-lg font-black mb-6 italic tracking-tight">NO ET QUEDIS CALLAT!</h3>
 
-        <div className="grid grid-cols-1 gap-3">
-          <div className="flex flex-col gap-2">
-            <a
-              href="https://queixes.gencat.cat/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-4 px-6 bg-foreground text-background rounded-2xl font-bold transition-all hover:opacity-90 active:scale-95"
-            >
-              <ExternalLink size={18} />
-              FORMULARI DE QUEIXA OFICIAL GENCAT
-            </a>
-            <p className="text-[10px] text-neutral-500 font-medium italic">
-              Important: Perquè la queixa tingui validesa legal, cal omplir aquest formulari oficial
-            </p>
-          </div>
-        </div>
         <p className="mt-12 text-[10px] uppercase font-bold opacity-30 tracking-[0.2em]">
           <a href="https://comarquesgironines.cat" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">CUP Comarques Gironines</a>
         </p>
+        <div className="flex justify-center mt-12">
+          <img src="logo_cup_ccgg_negre.jpeg" alt="Logo CUP Comarques Gironines" width={200} height={200} />
+        </div>
       </section>
     </main>
   );

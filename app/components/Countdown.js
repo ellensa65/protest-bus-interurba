@@ -60,8 +60,8 @@ export default function Countdown() {
       <div className="bg-neutral-900 rounded-3xl p-6 pt-7 pb-5 mx-2 flex justify-center items-center gap-2 shadow-2xl border-t border-white/5 relative overflow-hidden">
         <TimeUnit value={timeLeft.days} label="DIES" />
         <TimeUnit value={timeLeft.hours} label="HORES" />
-        <TimeUnit value={timeLeft.minutes} label="MINS" />
-        <TimeUnit value={timeLeft.seconds} label="SEGS" isLast />
+        <TimeUnit value={timeLeft.minutes} label="MIN" />
+        <TimeUnit value={timeLeft.seconds} label="SEG" isLast />
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 'use server';
 
+import { supabase } from '../lib/supabase';
+
 export async function submitReportAction(reportData, turnstileToken) {
   const secretKey = process.env.TURNSTILE_SECRET_KEY;
   if (!secretKey) {
@@ -33,16 +35,44 @@ export async function submitReportAction(reportData, turnstileToken) {
       };
     }
 
-    // Lògica per desar la incidència (en aquest cas, log a la consola)
-    console.log("Incidència registrada amb èxit:", {
-      ...reportData,
-      verifiedAt: data.challenge_ts,
-      hostname: data.hostname,
-    });
+    // Validació i preparació de les dades del formulari
+    const { operator, delay, comment } = reportData || {};
 
+    if (!operator || typeof operator !== 'string') {
+      return { success: false, error: "L'operadora no és vàlida." };
+    }
+
+    const parsedDelay = parseInt(delay, 10);
+    if (isNaN(parsedDelay) || parsedDelay < 0) {
+      return { success: false, error: "El retard ha de ser un número de minuts positiu o zero." };
+    }
+
+    const cleanComment = (comment || '').trim();
+    if (cleanComment.length > 200) {
+      return { success: false, error: "El comentari no pot tenir més de 200 caràcters." };
+    }
+
+    // Inserció real a la taula 'incidencies' de Supabase
+    const { error: dbError } = await supabase
+      .from('Incidencies')
+      .insert([
+        {
+          operadora: operator,
+          retard: parsedDelay,
+          comentari: cleanComment || null
+        }
+      ]);
+
+    if (dbError) {
+      console.error("Error al registrar la incidència a Supabase:", dbError);
+      return { success: false, error: "S'ha produït un error al registrar la incidència a la base de dades." };
+    }
+
+    console.log("Incidència registrada correctament a Supabase.");
     return { success: true };
   } catch (error) {
-    console.error("Error validant Turnstile:", error);
-    return { success: false, error: "Error de connexió en validar la seguretat." };
+    console.error("Error en submitReportAction:", error);
+    return { success: false, error: "Error de connexió en validar o registrar la incidència." };
   }
 }
+

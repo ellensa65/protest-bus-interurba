@@ -45,22 +45,55 @@ export default async function SarfaProtestPage() {
 
   const { data: records, error } = await supabase
     .from('Incidencies')
-    .select('retard')
+    .select('retard, operadora')
     .gte('created_at', sevenDaysAgo.toISOString());
 
   if (error) {
     console.error("Error obtenint retards de Supabase:", error);
   }
 
-  const totalDelayMinutes = records
-    ? records.reduce((sum, row) => sum + (row.retard || 0), 0)
-    : 0;
+  // Agrupació i sumatori per operadora
+  const operatorDelays = {};
+  let totalDelayMinutes = 0;
+
+  if (records) {
+    records.forEach(row => {
+      const op = row.operadora || 'Desconegut';
+      const delay = row.retard || 0;
+      totalDelayMinutes += delay;
+      operatorDelays[op] = (operatorDelays[op] || 0) + delay;
+    });
+  }
 
   const formattedTime = formatDelay(totalDelayMinutes);
 
   // Topall simbòlic de 50 hores (3000 minuts)
   const maxMinutes = 50 * 60;
   const percentage = Math.min(100, (totalDelayMinutes / maxMinutes) * 100);
+
+  // Mapeig de claus d'operadores a noms descriptius
+  const OPERATOR_NAMES = {
+    '3': 'Ampsa',
+    '2': 'TEISA',
+    '1': 'Sarfa',
+    'Ampsa': 'Ampsa',
+    'TEISA': 'TEISA',
+    'Sarfa': 'Sarfa'
+  };
+
+  const breakdown = Object.entries(operatorDelays)
+    .map(([op, minutes]) => {
+      const name = OPERATOR_NAMES[op] || op;
+      return {
+        key: op,
+        name,
+        minutes,
+        formatted: formatDelay(minutes),
+        percentage: totalDelayMinutes > 0 ? (minutes / totalDelayMinutes) * 100 : 0
+      };
+    })
+    .filter(item => item.minutes > 0)
+    .sort((a, b) => b.minutes - a.minutes);
 
   const comments = [
     {
@@ -130,6 +163,38 @@ export default async function SarfaProtestPage() {
               style={{ width: `${percentage}%` }}
             />
           </div>
+
+          {/* Desglòs per operadora */}
+          {breakdown.length > 0 && (
+            <>
+              <div className="my-6 border-t border-neutral-200 dark:border-neutral-800" />
+              <div className="flex flex-col gap-4">
+                <p className="text-[10px] font-black text-neutral-400 tracking-wider uppercase">
+                  DESGLÒS PER OPERADORA
+                </p>
+                <div className="flex flex-col gap-4">
+                  {breakdown.map((item) => (
+                    <div key={item.key} className="flex flex-col gap-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="font-extrabold text-neutral-600">
+                          {item.name}
+                        </span>
+                        <span className="font-black text-red-600 dark:text-red-400 text-sm">
+                          {item.formatted}
+                        </span>
+                      </div>
+                      <div className="h-2 w-full bg-neutral-200 dark:bg-neutral-600 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-red-600 dark:bg-red-500 rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${item.percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="mt-4 flex items-start gap-2 text-xs text-neutral-500 dark:text-neutral-400 italic">
             <Info size={12} className="shrink-0 mt-0.5" />

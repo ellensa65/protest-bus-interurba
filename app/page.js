@@ -272,15 +272,9 @@ export default async function SarfaProtestPage() {
           </div>
         </div>
         <p className="mt-12 text-[10px] uppercase font-bold opacity-30 tracking-[0.2em]">
-          Plataforma d&apos;usuaris afectats per la Sarfa • La Bisbal d&apos;Empordà
+          <a href="https://comarquesgironines.cat" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">CUP Comarques Gironines</a>
         </p>
       </section>
-
-      {/* Fixed Background Decal */}
-      <div className="fixed top-0 right-0 -z-10 opacity-[0.03] select-none pointer-events-none overflow-hidden">
-        <h1 className="text-[200px] font-black leading-none rotate-90 translate-x-1/2">SARFA</h1>
-      </div>
-
     </main>
   );
 }

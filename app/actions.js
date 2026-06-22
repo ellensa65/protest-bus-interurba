@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { supabase } from '../lib/supabase';
 
 export async function submitReportAction(reportData, turnstileToken) {
@@ -69,10 +70,15 @@ export async function submitReportAction(reportData, turnstileToken) {
     }
 
     console.log("Incidència registrada correctament a Supabase.");
+    
+    // Revalidar el path principal per refrescar el Retardòmetre del servidor instantàniament
+    revalidatePath('/');
+
     return { success: true };
   } catch (error) {
     console.error("Error en submitReportAction:", error);
     return { success: false, error: "Error de connexió en validar o registrar la incidència." };
   }
 }
+
 

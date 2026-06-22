@@ -1,20 +1,19 @@
-'use client';
-
 import React from 'react';
 import {
   AlertTriangle,
   MessageSquare,
   Clock,
   ExternalLink,
-  Send,
-  Users,
-  ThumbsDown,
   Info,
   ClipboardList,
   Camera,
   FileText
 } from 'lucide-react';
-import ReportModal from './components/ReportModal';
+import Countdown from './components/Countdown';
+import ProtestButton from './components/ProtestButton';
+import { supabase } from '../lib/supabase';
+
+export const dynamic = 'force-dynamic';
 
 // --- Simplified Components ---
 
@@ -30,80 +29,38 @@ const Card = ({ children, className = "" }) => (
   </div>
 );
 
-const TimeUnit = ({ value, label, isLast = false }) => (
-  <div className="flex items-center gap-2">
-    <div className="flex flex-col items-center">
-      <span className="text-4xl font-black text-red-600 tabular-nums leading-tight drop-shadow-[0_0_10px_rgba(220,38,38,0.3)]">
-        {value.toString().padStart(value >= 100 ? 3 : 2, '0')}
-      </span>
-      <span className="text-[9px] font-bold text-white/50 tracking-widest mt-1">
-        {label}
-      </span>
-    </div>
-    {!isLast && <span className="text-2xl font-black text-white/10 mb-5">:</span>}
-  </div>
-);
-
-const Countdown = () => {
-  const [mounted, setMounted] = React.useState(false);
-  const [timeLeft, setTimeLeft] = React.useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
-  React.useEffect(() => {
-    setMounted(true);
-    const targetDate = new Date('2028-01-01T00:00:00');
-
-    const calculateTime = () => {
-      const now = new Date();
-      const difference = targetDate - now;
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        });
-      }
-    };
-
-    calculateTime();
-    const timer = setInterval(calculateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <div className="bg-neutral-900 rounded-3xl p-6 mx-2 h-24 animate-pulse flex items-center justify-center">
-        <span className="text-white/20 font-black tracking-widest">CARREGANT RELOTGE...</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-4">
-      <p className="text-center text-[11px] font-bold text-neutral-500 px-4 leading-normal">
-        Compte enrere per a la fi de la concessió actual (2028).<br />
-        <span className="uppercase text-[9px] opacity-60">Cada retard compta per al nou concurs.</span>
-      </p>
-      <div className="bg-neutral-900 rounded-3xl p-6 pt-7 pb-5 mx-2 flex justify-center items-center gap-2 shadow-2xl border-t border-white/5 relative overflow-hidden">
-        {/* Background Decal */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
-          <span className="text-8xl font-black italic scale-150">SARFA</span>
-        </div>
-
-        <TimeUnit value={timeLeft.days} label="DIES" />
-        <TimeUnit value={timeLeft.hours} label="HORES" />
-        <TimeUnit value={timeLeft.minutes} label="MINS" />
-        <TimeUnit value={timeLeft.seconds} label="SEGS" isLast />
-      </div>
-    </div>
-  );
-};
+function formatDelay(minutes) {
+  if (!minutes || minutes <= 0) return "0h 00min";
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours}h ${remainingMinutes.toString().padStart(2, '0')}min`;
+}
 
 // --- Content Sections ---
 
-export default function SarfaProtestPage() {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+export default async function SarfaProtestPage() {
+  // Obtenir la suma total de retard dels últims 7 dies
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const { data: records, error } = await supabase
+    .from('Incidencies')
+    .select('retard')
+    .gte('created_at', sevenDaysAgo.toISOString());
+
+  if (error) {
+    console.error("Error obtenint retards de Supabase:", error);
+  }
+
+  const totalDelayMinutes = records
+    ? records.reduce((sum, row) => sum + (row.retard || 0), 0)
+    : 0;
+
+  const formattedTime = formatDelay(totalDelayMinutes);
+
+  // Topall simbòlic de 50 hores (3000 minuts)
+  const maxMinutes = 50 * 60;
+  const percentage = Math.min(100, (totalDelayMinutes / maxMinutes) * 100);
 
   const comments = [
     {
@@ -143,13 +100,7 @@ export default function SarfaProtestPage() {
           La realitat diària del bus a les Comarques Gironines
         </p>
 
-        <button
-          className="w-full py-6 px-8 bg-accent hover:opacity-90 active:scale-95 transition-all rounded-2xl text-white font-black text-xl uppercase tracking-tighter animate-protest-pulse flex flex-col items-center gap-1 shadow-2xl shadow-accent/20 cursor-pointer"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <span>ESTIC A LA PARADA</span>
-          <span className="text-sm opacity-80 font-bold">I EL BUS NO VE</span>
-        </button>
+        <ProtestButton />
       </section>
 
       {/* Countdown Section */}
@@ -163,24 +114,26 @@ export default function SarfaProtestPage() {
         <Card className="relative overflow-hidden border-2 border-accent/20">
           <div className="flex justify-between items-end mb-4">
             <div>
-              <p className="text-sm font-bold opacity-60">FIABILITAT SETMANAL</p>
-              <h3 className="text-4xl font-black text-accent leading-none">85%</h3>
+              <p className="text-xs font-bold text-neutral-400 tracking-wider uppercase">TEMPS ACUMULAT DE RETARD</p>
+              <h3 className="text-4xl font-black text-red-600 leading-none mt-1">
+                {formattedTime}
+              </h3>
             </div>
-            <p className="text-right text-xs font-bold max-w-[100px] leading-tight opacity-70 italic">
-              DE BUSOS AMB RETARD O INCIDÈNCIES
+            <p className="text-right text-xs font-black max-w-[150px] leading-tight text-neutral-600 dark:text-neutral-400 uppercase">
+              DE TEMPS PERDUT PELS USUARIS
             </p>
           </div>
 
-          <div className="h-4 w-full bg-neutral-200 rounded-full overflow-hidden">
+          <div className="h-4 w-full bg-neutral-200 dark:bg-neutral-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-accent rounded-full transition-all duration-1000 ease-out"
-              style={{ width: '85%' }}
+              className="h-full bg-red-600 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${percentage}%` }}
             />
           </div>
 
           <div className="mt-4 flex items-start gap-2 text-xs text-neutral-500 dark:text-neutral-400 italic">
             <Info size={12} className="shrink-0 mt-0.5" />
-            <span>Dades basades en les queixes ciutadanes d&apos;aquesta setmana.</span>
+            <span>Dades basades en els minuts de retard reportats per la ciutadania aquesta setmana.</span>
           </div>
         </Card>
       </section>
@@ -328,9 +281,8 @@ export default function SarfaProtestPage() {
         <h1 className="text-[200px] font-black leading-none rotate-90 translate-x-1/2">SARFA</h1>
       </div>
 
-      <ReportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
     </main>
   );
 }
+
 

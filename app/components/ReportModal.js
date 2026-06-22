@@ -72,7 +72,7 @@ export default function ReportModal({ isOpen, onClose }) {
       if (result.success) {
         setSubmitSuccess(true);
         // Reset form
-        setOperator('Ampsa');
+        setOperator('3');
         setDelay(10);
         setComment('');
         setTurnstileToken('');

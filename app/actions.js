@@ -58,7 +58,7 @@ export async function submitReportAction(reportData, turnstileToken) {
       .from('Incidencies')
       .insert([
         {
-          operadora: operator,
+          operadora_id: operator,
           retard: parsedDelay,
           comentari: cleanComment || null
         }
@@ -70,7 +70,7 @@ export async function submitReportAction(reportData, turnstileToken) {
     }
 
     console.log("Incidència registrada correctament a Supabase.");
-    
+
     // Revalidar el path principal per refrescar el Retardòmetre del servidor instantàniament
     revalidatePath('/');
 

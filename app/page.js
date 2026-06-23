@@ -263,11 +263,11 @@ export default async function SarfaProtestPage() {
       <section className="mt-8 mb-12 text-center border-t border-neutral-200 dark:border-neutral-800 pt-12">
         <h3 className="text-lg font-black mb-6 italic tracking-tight">NO ET QUEDIS CALLAT!</h3>
 
-        <p className="mt-12 text-[10px] uppercase font-bold opacity-30 tracking-[0.2em]">
+        <p className="mt-12 text-[15px] uppercase font-bold opacity-70 tracking-[0.2em]">
           <a href="https://comarquesgironines.cat" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">CUP Comarques Gironines</a>
         </p>
         <div className="flex justify-center mt-12">
-          <img src="logo_cup_ccgg_negre.jpeg" alt="Logo CUP Comarques Gironines" width={200} height={200} />
+          <img src="logo_cup_comarques_gironines.png" alt="Logo CUP Comarques Gironines" width={200} height={200} />
         </div>
       </section>
     </main>

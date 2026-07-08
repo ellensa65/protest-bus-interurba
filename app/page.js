@@ -261,13 +261,15 @@ export default async function SarfaProtestPage() {
 
       {/* Footer Section */}
       <section className="mt-8 mb-12 text-center border-t border-neutral-200 dark:border-neutral-800 pt-12">
-        <h3 className="text-lg font-black mb-6 italic tracking-tight">NO ET QUEDIS CALLAT!</h3>
+        <h3 className="text-lg font-black mb-6 italic tracking-tight">DIGUE-HI LA TEVA!</h3>
 
         <p className="mt-12 text-[15px] uppercase font-bold opacity-70 tracking-[0.2em]">
           <a href="https://comarquesgironines.cat" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">CUP Comarques Gironines</a>
         </p>
         <div className="flex justify-center mt-12">
-          <img src="logo_cup_comarques_gironines.png" alt="Logo CUP Comarques Gironines" width={200} height={200} />
+          <a href="https://comarquesgironines.cat" target="_blank" rel="noopener noreferrer">
+            <img src="logo_cup_comarques_gironines.png" alt="Logo CUP Comarques Gironines" width={200} height={200} />
+          </a>
         </div>
       </section>
     </main>

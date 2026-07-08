@@ -22,13 +22,14 @@ Aquesta aplicació està pensada per ser accessible de forma totalment oberta a 
 ### 1. Protecció contra bots (anti-spam)
 Per evitar la inserció massiva de dades falses o atacs de denegació de servei (DoS) en els formularis, s'utilitzen les següents mesures:
 
-*   **Cloudflare Turnstile (Implementat):** S'ha integrat el sistema Turnstile al formulari d'incidències. Funciona de manera intel·ligent i invisible al frontend (analitzant el comportament) i es valida de forma asíncrona al backend mitjançant un *Next.js Server Action* abans de permetre qualsevol inserció a la base de dades de Supabase. Això atura els bots sense necessitat de molestar l'usuari amb reptes de codi o imatges (CAPTCHAs clàssics), optimitzant l'experiència en dispositius mòbils.
+*   **Cloudflare Turnstile (Implementat):** S'ha integrat el sistema Turnstile al formulari d'incidències. Funciona de manera intel·ligent i invisible al frontend (analitzant el comportament) i es valida de forma asíncrona al backend mitjançant un *Next.js Server Action* abans de permetre qualsevol inserció a la base de dades de Supabase. Això atura els bots sense necessitat de molestar l'usuari amb reptes de codi o imatges (CAPTCHAs clàssics)optimitzant l'experiència en dispositius mòbils.
+
 *   **Filtre de contingut i paraules ofensives (Pendent d'implementació):** S'afegirà un sistema de filtratge (*profanity filter*) en el backend de l'aplicació. Abans de publicar qualsevol comentari a **El Mur**, el text passarà per una llista de control de vocabulari no acceptat (en català i castellà). Si es detecten insults o contingut inapropiat l'enviament serà rebutjat de manera automàtica per protegir la integritat pública de la plataforma.
 
-### 2. Privadesa de l'Usuari (Anonimat per Disseny)
+### 2. Privadesa de l'usuari
 D'acord amb el principi de *Privacy by Design*, l'aplicació està dissenyada per recollir el mínim d'informació possible per al seu funcionament:
 
-*   **Sense registre ni dades personals:** No es demana el nom, correu electrònic, telèfon ni cap altra dada d'identificació personal. Al sistema (i visualment a **El Mur**), tots els reports queden registrats sota la identitat única d'**"Usuari Anònim" (UA)**.
+*   **Sense registre ni dades personals:** No es demana el nom, correu electrònic, telèfon ni cap altra dada d'identificació personal. Al sistema (i visualment a **El Mur**) tots els reports queden registrats sota la identitat única d'**"Usuari Anònim" (UA)**.
 *   **Sense traçabilitat d'adreces IP:** Les adreces IP dels usuaris només es processen de manera efímera en memòria per a controls estrictes de seguretat en el servidor (com evitar peticions massives en pocs segons). **Mai es guarden a la base de dades** ni s'associen amb els comentaris o retards enviats.
 
 ## Getting Started

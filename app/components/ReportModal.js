@@ -6,7 +6,7 @@ import { Turnstile } from '@marsidev/react-turnstile';
 import { submitReportAction } from '../actions';
 
 export default function ReportModal({ isOpen, onClose }) {
-  const [operator, setOperator] = useState('Ampsa');
+  const [operator, setOperator] = useState('3');
   const [delay, setDelay] = useState(10);
   const [comment, setComment] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');

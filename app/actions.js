@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { supabase } from '../lib/supabase';
+import { cleanComment } from '../lib/forbiddenWords';
 
 export async function submitReportAction(reportData, turnstileToken) {
   const secretKey = process.env.TURNSTILE_SECRET_KEY;
@@ -48,10 +49,15 @@ export async function submitReportAction(reportData, turnstileToken) {
       return { success: false, error: "El retard ha de ser un número de minuts positiu o zero." };
     }
 
-    const cleanComment = (comment || '').trim();
-    if (cleanComment.length > 200) {
+    const rawComment = (comment || '').trim();
+    if (rawComment.length > 200) {
       return { success: false, error: "El comentari no pot tenir més de 200 caràcters." };
     }
+
+    // Filtratge de paraules ofensives/prohibides.
+    // Si conté contingut no permès, cleanComment retorna null per evitar que s'escrigui a "El Mur",
+    // però registrant la incidència normalment per sumador del Retardòmetre.
+    const finalComment = cleanComment(rawComment);
 
     // Inserció real a la taula 'incidencies' de Supabase
     const { error: dbError } = await supabase
@@ -60,7 +66,7 @@ export async function submitReportAction(reportData, turnstileToken) {
         {
           operadora_id: operator,
           retard: parsedDelay,
-          comentari: cleanComment || null
+          comentari: finalComment
         }
       ]);
 

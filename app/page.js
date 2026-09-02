@@ -238,7 +238,7 @@ export default async function SarfaProtestPage() {
           <span className="text-[10px] font-bold bg-neutral-200 px-2 py-1 rounded">EN DIRECTE</span>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 max-h-[480px] overflow-y-auto pr-2">
           {comments.map((comment, i) => (
             <div key={i} className="flex gap-4 items-start">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shadow-inner`}>

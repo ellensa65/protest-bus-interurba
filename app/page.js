@@ -152,7 +152,7 @@ export default async function SarfaProtestPage() {
       <section className="text-center pt-8 pb-4">
 
         <h1 className="text-6xl sm:text-7xl font-black leading-none mb-4 tracking-tighter">
-          ENCARA <span className="text-red-600 tracking-normal overflow-visible">ESPERES?</span>
+          ENCARA <span className="text-red-600 tracking-normal overflow-visible">T'ESPERES?</span>
         </h1>
 
         <p className="text-xl font-medium text-neutral-600 dark:text-neutral-400 mb-10 leading-snug">

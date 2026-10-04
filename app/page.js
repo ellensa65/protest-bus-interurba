@@ -261,7 +261,7 @@ export default async function SarfaProtestPage() {
 
       {/* Footer Section */}
       <section className="mt-8 mb-12 text-center border-t border-neutral-200 dark:border-neutral-800 pt-12">
-        <h3 className="text-lg font-black mb-6 italic tracking-tight">DIGUE-HI LA TEVA!</h3>
+        <h3 className="text-lg font-bold mb-6 tracking-tight">DIGUE-HI LA TEVA!</h3>
 
         <p className="mt-12 text-[15px] uppercase font-bold opacity-70 tracking-[0.2em]">
           <a href="https://comarquesgironines.cat" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">CUP Comarques Gironines</a>

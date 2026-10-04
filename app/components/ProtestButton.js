@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { MousePointerClick } from 'lucide-react';
 import ReportModal from './ReportModal';
 
 export default function ProtestButton() {
@@ -13,7 +14,8 @@ export default function ProtestButton() {
         onClick={() => setIsModalOpen(true)}
       >
         <span>SOC A LA PARADA</span>
-        <span className="text-sm opacity-80 font-bold">I EL BUS NO VE</span>
+        <span className="text-sm opacity-80 font-bold flex items-center gap-2">I EL BUS NO VE <MousePointerClick size={16} /></span>
+
       </button>
 
       <ReportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

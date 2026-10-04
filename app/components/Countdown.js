@@ -53,9 +53,8 @@ export default function Countdown() {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-center text-[11px] font-bold text-neutral-500 px-4 leading-normal">
-        Compte enrere per a la fi de la concessió actual (2028)<br />
-        <span className="uppercase text-[9px] opacity-60">Tot i això la Generalitat de Catalunya ho ha prorrogat fins el 2034</span>
+      <p className="text-center text-[20px] font-bold text-neutral-500 px-4 leading-normal">
+        Compte enrere per a la fi de la concessió actual (2028)
       </p>
       <div className="bg-neutral-900 rounded-3xl p-6 pt-7 pb-5 mx-2 flex justify-center items-center gap-2 shadow-2xl border-t border-white/5 relative overflow-hidden">
         <TimeUnit value={timeLeft.days} label="DIES" />
@@ -63,6 +62,7 @@ export default function Countdown() {
         <TimeUnit value={timeLeft.minutes} label="MIN" />
         <TimeUnit value={timeLeft.seconds} label="SEG" isLast />
       </div>
+      <span className="text-center font-bold text-neutral-500 uppercase text-[15px] opacity-60">Tot i això la Generalitat de Catalunya ho ha prorrogat fins el 2034</span>
     </div>
   );
 }

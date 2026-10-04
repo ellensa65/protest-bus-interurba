@@ -239,7 +239,7 @@ export default function ReportModal({ isOpen, onClose }) {
 
           {submitSuccess && (
             <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900 text-emerald-600 dark:text-emerald-400 rounded-2xl text-xs font-bold leading-normal">
-              Report enviat correctament. Gràcies per col·laborar!
+              Incidència enviada correctament. Gràcies per col·laborar!
             </div>
           )}
 
@@ -266,7 +266,7 @@ export default function ReportModal({ isOpen, onClose }) {
               ) : (
                 <>
                   <Send size={16} />
-                  ENVIAR REPORT
+                  ENVIAR INCIDÈNCIA
                 </>
               )}
             </button>
